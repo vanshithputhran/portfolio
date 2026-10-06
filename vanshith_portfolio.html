@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanshith | 3D Animator & Digital Artist</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#08090e',
+                        cardBg: '#12141c',
+                        neonPurple: '#a855f7',
+                        neonCyan: '#06b6d4',
+                        neonOrange: '#f97316'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Three.js for Background Ambient Effect -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* Custom scrollbar and global styles */
+        body {
+            background-color: #08090e;
+            color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Outfit', sans-serif;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #08090e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+        .glow-purple {
+            box-shadow: 0 0 40px -10px rgba(168, 85, 247, 0.3);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 40px -10px rgba(6, 182, 212, 0.3);
+        }
+        .glass-card {
+            background: rgba(18, 20, 28, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #a855f7 0%, #06b6d4 50%, #f97316 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        canvas#bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="relative selection:bg-neonPurple selection:text-white">
+
+    <canvas id="bg-canvas"></canvas>
+
+    <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="#" class="text-2xl font-black font-display tracking-wider text-white flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-neonPurple animate-pulse"></span>
+                VANSHITH
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+                <a href="#about" class="hover:text-neonCyan transition-colors">About</a>
+                <a href="#showcase" class="hover:text-neonCyan transition-colors">Showcase</a>
+                <a href="#scriptwriting" class="hover:text-neonCyan transition-colors">The Blue Tapari</a>
+                <a href="#easteregg" class="hover:text-neonCyan transition-colors">Galaxy Projector</a>
+                <a href="#contact" class="hover:text-neonCyan transition-colors">Contact</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <a href="#contact" class="hidden sm:inline-flex px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all shadow-lg shadow-purple-900/30">
+                    Let's Talk
+                </a>
+                <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white focus:outline-none">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden glass-card border-b border-white/10 px-6 py-6 space-y-4">
+            <a href="#about" class="block text-gray-300 hover:text-neonCyan transition-colors">About</a>
+            <a href="#showcase" class="block text-gray-300 hover:text-neonCyan transition-colors">Showcase</a>
+            <a href="#scriptwriting" class="block text-gray-300 hover:text-neonCyan transition-colors">The Blue Tapari</a>
+            <a href="#easteregg" class="block text-gray-300 hover:text-neonCyan transition-colors">Galaxy Projector</a>
+            <a href="#contact" class="block text-gray-300 hover:text-neonCyan transition-colors">Contact</a>
+        </div>
+    </header>
+
+    <section class="relative min-h-screen flex items-center justify-center pt-28 pb-16 px-6 z-10">
+        <div class="max-w-5xl mx-auto text-center space-y-8">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-xs font-semibold text-neonCyan uppercase tracking-widest border border-cyan-500/20 animate-bounce">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 3D Animator & Digital Artist
+            </div>
+
+            <h1 class="text-5xl sm:text-7xl lg:text-8xl font-black font-display tracking-tight leading-none">
+                CRAFTING <span class="text-gradient">DIMENSIONS</span> & MOVING SOULS
+            </h1>
+
+            <p class="max-w-2xl mx-auto text-lg sm:text-xl text-gray-400 font-light leading-relaxed">
+                Hi, I'm <strong class="text-white font-semibold">Vanshith</strong>. I bridge the gap between imagination and reality through immersive 3D animation, fluid 2D motion, cinematic art, and compelling storytelling.
+            </p>
+
+            <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+                <a href="#showcase" class="px-8 py-4 rounded-full font-semibold text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:opacity-90 transition-all shadow-xl shadow-purple-900/40 flex items-center gap-3 group">
+                    Explore Showcase 
+                    <i data-lucide="arrow-down" class="w-4 h-4 group-hover:translate-y-1 transition-transform"></i>
+                </a>
+                <a href="#easteregg" class="px-8 py-4 rounded-full font-semibold text-gray-200 glass-card hover:bg-white/10 transition-all border border-white/10 flex items-center gap-3">
+                    <i data-lucide="orbit" class="w-4 h-4 text-neonCyan"></i> Launch Galaxy Mode
+                </a>
+            </div>
+
+            <!-- Quick stats ticker -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-12 max-w-4xl mx-auto">
+                <div class="glass-card p-6 rounded-2xl text-center border border-white/5">
+                    <h3 class="text-3xl font-bold font-display text-white">5+</h3>
+                    <p class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Years Experience</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl text-center border border-white/5">
+                    <h3 class="text-3xl font-bold font-display text-neonPurple">40+</h3>
+                    <p class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Projects Completed</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl text-center border border-white/5">
+                    <h3 class="text-3xl font-bold font-display text-neonCyan">12K</h3>
+                    <p class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Community Reach</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl text-center border border-white/5">
+                    <h3 class="text-3xl font-bold font-display text-neonOrange">1</h3>
+                    <p class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Original Series ("Blue Tapari")</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-24 px-6 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="inline-flex items-center gap-2 text-xs font-semibold text-neonPurple uppercase tracking-widest">
+                        <i data-lucide="user" class="w-4 h-4"></i> About The Artist
+                    </div>
+                    <h2 class="text-4xl sm:text-5xl font-extrabold font-display leading-tight">
+                        PASSIONATE ABOUT <span class="text-gradient">CINEMA & MOTION</span>
+                    </h2>
+                    <p class="text-gray-300 leading-relaxed font-light">
+                        My creative journey is rooted in an obsession with how stories are told visually. Whether it's complex rigging in Blender, frame-by-frame 2D animation, or penning gripping scripts like my upcoming project <span class="text-white font-medium">"The Blue Tapari"</span>, I live for immersive world-building.
+                    </p>
+                    <div class="space-y-4 pt-2">
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 rounded-xl bg-purple-500/10 text-neonPurple border border-purple-500/20">
+                                <i data-lucide="box" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-white">3D Modeling & Animation</h4>
+                                <p class="text-sm text-gray-400">Expert in Blender, Maya, Substance Painter, and Unreal Engine rendering pipelines.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 rounded-xl bg-cyan-500/10 text-neonCyan border border-cyan-500/20">
+                                <i data-lucide="film" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-white">2D Motion & Concept Art</h4>
+                                <p class="text-sm text-gray-400">Creating expressive digital paintings, storyboards, and fluid hand-drawn animations.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 rounded-xl bg-orange-500/10 text-neonOrange border border-orange-500/20">
+                                <i data-lucide="book-open" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-white">Scriptwriting & Directing</h4>
+                                <p class="text-sm text-gray-400">Authoring independent screenplays and character arcs that touch raw human emotion.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7">
+                    <div class="relative rounded-3xl overflow-hidden glass-card p-3 border border-white/10 glow-purple">
+                        <div class="aspect-video rounded-2xl overflow-hidden relative group bg-gray-900">
+                            <img src="https://placehold.co/800x450/12141c/a855f7?text=Vanshith+Studio+Workspace" alt="Vanshith Studio" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-80"></div>
+                            <div class="absolute bottom-6 left-6 right-6 flex items-center justify-between">
+                                <div>
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-neonPurple/20 text-neonPurple border border-neonPurple/30">Studio Setup</span>
+                                    <h3 class="text-xl font-bold font-display text-white mt-2">Where Magic Happens</h3>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 text-white">
+                                    <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="showcase" class="py-24 px-6 relative z-10 bg-gradient-to-b from-transparent via-cardBg/40 to-transparent">
+        <div class="max-w-7xl mx-auto space-y-12">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div class="space-y-3">
+                    <div class="inline-flex items-center gap-2 text-xs font-semibold text-neonCyan uppercase tracking-widest">
+                        <i data-lucide="layers" class="w-4 h-4"></i> Portfolio Gallery
+                    </div>
+                    <h2 class="text-4xl sm:text-5xl font-extrabold font-display">
+                        FEATURED <span class="text-gradient">MASTERPIECES</span>
+                    </h2>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="flex flex-wrap gap-2 p-1.5 glass-card rounded-2xl border border-white/10">
+                    <button class="filter-btn px-5 py-2 rounded-xl text-sm font-semibold transition-all bg-neonPurple text-white shadow-lg shadow-purple-900/40" data-filter="all">All Work</button>
+                    <button class="filter-btn px-5 py-2 rounded-xl text-sm font-semibold transition-all text-gray-400 hover:text-white" data-filter="3d">3D Art</button>
+                    <button class="filter-btn px-5 py-2 rounded-xl text-sm font-semibold transition-all text-gray-400 hover:text-white" data-filter="2d">2D Animation</button>
+                    <button class="filter-btn px-5 py-2 rounded-xl text-sm font-semibold transition-all text-gray-400 hover:text-white" data-filter="concept">Concept Art</button>
+                </div>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="gallery-grid">
+                
+                <!-- Item 1: 3D Art -->
+                <div class="gallery-item group rounded-3xl overflow-hidden glass-card border border-white/10 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-900/30" data-category="3d" onclick="openModal('Cyberpunk Alleyway 3D', 'A fully textured and lit cyberpunk urban alley created in Blender and rendered in Cycles. Inspired by classic neo-noir aesthetics with volumetric fog and neon sign shaders.', 'https://placehold.co/800x600/12141c/06b6d4?text=Cyberpunk+Alley+3D')">
+                    <div class="aspect-[4/3] overflow-hidden relative">
+                        <img src="https://placehold.co/800x600/12141c/06b6d4?text=Cyberpunk+Alley+3D" alt="Cyberpunk Alley" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-60"></div>
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/20 text-neonCyan border border-cyan-500/30 backdrop-blur-md">3D Art</span>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-darkBg/50 backdrop-blur-sm">
+                            <span class="px-5 py-2.5 rounded-full text-sm font-semibold bg-white text-darkBg flex items-center gap-2">
+                                <i data-lucide="eye" class="w-4 h-4"></i> View Project
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <h3 class="text-xl font-bold font-display text-white group-hover:text-neonCyan transition-colors">Cyberpunk Alleyway 3D</h3>
+                        <p class="text-sm text-gray-400 line-clamp-2">Environment design featuring complex shaders, volumetric lighting, and particle effects.</p>
+                    </div>
+                </div>
+
+                <!-- Item 2: 2D Animation -->
+                <div class="gallery-item group rounded-3xl overflow-hidden glass-card border border-white/10 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-900/30" data-category="2d" onclick="openModal('Neon Chase 2D Animation', 'Hand-drawn character motion loop exploring dynamic action framing and velocity lines.', 'https://placehold.co/800x600/12141c/a855f7?text=Neon+Chase+2D')">
+                    <div class="aspect-[4/3] overflow-hidden relative">
+                        <img src="https://placehold.co/800x600/12141c/a855f7?text=Neon+Chase+2D" alt="Neon Chase" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-60"></div>
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/20 text-neonPurple border border-purple-500/30 backdrop-blur-md">2D Animation</span>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-darkBg/50 backdrop-blur-sm">
+                            <span class="px-5 py-2.5 rounded-full text-sm font-semibold bg-white text-darkBg flex items-center gap-2">
+                                <i data-lucide="eye" class="w-4 h-4"></i> View Animation
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <h3 class="text-xl font-bold font-display text-white group-hover:text-neonPurple transition-colors">Neon Chase Loop</h3>
+                        <p class="text-sm text-gray-400 line-clamp-2">Traditional 24fps character action sequence with fluid framing and color grading.</p>
+                    </div>
+                </div>
+
+                <!-- Item 3: Concept Art -->
+                <div class="gallery-item group rounded-3xl overflow-hidden glass-card border border-white/10 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-900/30" data-category="concept" onclick="openModal('The Blue Tapari - Concept Art', 'Visual development for the upcoming script and indie animation series set in a cozy futuristic tea stall.', 'https://placehold.co/800x600/12141c/f97316?text=The+Blue+Tapari+Art')">
+                    <div class="aspect-[4/3] overflow-hidden relative">
+                        <img src="https://placehold.co/800x600/12141c/f97316?text=The+Blue+Tapari+Art" alt="The Blue Tapari Concept" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-60"></div>
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-orange-500/20 text-neonOrange border border-orange-500/30 backdrop-blur-md">Concept Art</span>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-darkBg/50 backdrop-blur-sm">
+                            <span class="px-5 py-2.5 rounded-full text-sm font-semibold bg-white text-darkBg flex items-center gap-2">
+                                <i data-lucide="eye" class="w-4 h-4"></i> View Artwork
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <h3 class="text-xl font-bold font-display text-white group-hover:text-neonOrange transition-colors">The Blue Tapari Visuals</h3>
+                        <p class="text-sm text-gray-400 line-clamp-2">Atmospheric mood painting for a narrative-driven animated short film.</p>
+                    </div>
+                </div>
+
+                <!-- Item 4: 3D Art -->
+                <div class="gallery-item group rounded-3xl overflow-hidden glass-card border border-white/10 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-900/30" data-category="3d" onclick="openModal('Mecha Guardian 3D Model', 'Hard-surface sci-fi mecha design rigged and textured for real-time game engines.', 'https://placehold.co/800x600/12141c/06b6d4?text=Mecha+Guardian+3D')">
+                    <div class="aspect-[4/3] overflow-hidden relative">
+                        <img src="https://placehold.co/800x600/12141c/06b6d4?text=Mecha+Guardian+3D" alt="Mecha Guardian" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-60"></div>
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/20 text-neonCyan border border-cyan-500/30 backdrop-blur-md">3D Art</span>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-darkBg/50 backdrop-blur-sm">
+                            <span class="px-5 py-2.5 rounded-full text-sm font-semibold bg-white text-darkBg flex items-center gap-2">
+                                <i data-lucide="eye" class="w-4 h-4"></i> View Project
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <h3 class="text-xl font-bold font-display text-white group-hover:text-neonCyan transition-colors">Mecha Guardian</h3>
+                        <p class="text-sm text-gray-400 line-clamp-2">Hard-surface modeling showcasing clean topology and sci-fi wear-and-tear texturing.</p>
+                    </div>
+                </div>
+
+                <!-- Item 5: 2D Animation -->
+                <div class="gallery-item group rounded-3xl overflow-hidden glass-card border border-white/10 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-900/30" data-category="2d" onclick="openModal('Magical Spell FX Animation', 'VFX 2D animation sheet focusing on energy dissipation and magical particle bursts.', 'https://placehold.co/800x600/12141c/a855f7?text=Spell+FX+2D')">
+                    <div class="aspect-[4/3] overflow-hidden relative">
+                        <img src="https://placehold.co/800x600/12141c/a855f7?text=Spell+FX+2D" alt="Spell FX" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-60"></div>
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/20 text-neonPurple border border-purple-500/30 backdrop-blur-md">2D Animation</span>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-darkBg/50 backdrop-blur-sm">
+                            <span class="px-5 py-2.5 rounded-full text-sm font-semibold bg-white text-darkBg flex items-center gap-2">
+                                <i data-lucide="eye" class="w-4 h-4"></i> View Animation
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <h3 class="text-xl font-bold font-display text-white group-hover:text-neonPurple transition-colors">Magical Spell FX</h3>
+                        <p class="text-sm text-gray-400 line-clamp-2">Dynamic 2D special effects animation for fantasy game combat sequences.</p>
+                    </div>
+                </div>
+
+                <!-- Item 6: Concept Art -->
+                <div class="gallery-item group rounded-3xl overflow-hidden glass-card border border-white/10 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-900/30" data-category="concept" onclick="openModal('Dystopian Skyline Concept', 'High-contrast matte painting and tonal exploration for a dystopian sci-fi feature film script.', 'https://placehold.co/800x600/12141c/f97316?text=Dystopian+Skyline')">
+                    <div class="aspect-[4/3] overflow-hidden relative">
+                        <img src="https://placehold.co/800x600/12141c/f97316?text=Dystopian+Skyline" alt="Dystopian Skyline" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-60"></div>
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-orange-500/20 text-neonOrange border border-orange-500/30 backdrop-blur-md">Concept Art</span>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-darkBg/50 backdrop-blur-sm">
+                            <span class="px-5 py-2.5 rounded-full text-sm font-semibold bg-white text-darkBg flex items-center gap-2">
+                                <i data-lucide="eye" class="w-4 h-4"></i> View Artwork
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <h3 class="text-xl font-bold font-display text-white group-hover:text-neonOrange transition-colors">Dystopian Skyline</h3>
+                        <p class="text-sm text-gray-400 line-clamp-2">Matte painting and visual development for cinematic sci-fi settings.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="scriptwriting" class="py-24 px-6 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="glass-card rounded-3xl p-8 sm:p-12 border border-purple-500/30 relative overflow-hidden glow-purple">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-neonPurple/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/20 text-neonPurple text-xs font-semibold uppercase tracking-widest border border-purple-500/30">
+                            <i data-lucide="feather" class="w-3.5 h-3.5"></i> Featured Scriptwriting Project
+                        </div>
+                        <h2 class="text-4xl sm:text-5xl font-extrabold font-display leading-tight">
+                            "THE BLUE TAPARI"
+                        </h2>
+                        <p class="text-gray-300 font-light leading-relaxed">
+                            A poignant, atmospheric script written by Vanshith that explores midnight conversations, existential musings, and human connection over cups of hot tea in a neon-lit alleyway. Blending slice-of-life realism with magical realism elements.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                            <div class="p-4 rounded-2xl bg-darkBg/50 border border-white/5">
+                                <span class="text-xs text-gray-400 uppercase tracking-wider">Genre</span>
+                                <h4 class="font-bold text-white mt-1">Sci-Fi / Drama</h4>
+                            </div>
+                            <div class="p-4 rounded-2xl bg-darkBg/50 border border-white/5">
+                                <span class="text-xs text-gray-400 uppercase tracking-wider">Format</span>
+                                <h4 class="font-bold text-white mt-1">Animated Short</h4>
+                            </div>
+                            <div class="p-4 rounded-2xl bg-darkBg/50 border border-white/5">
+                                <span class="text-xs text-gray-400 uppercase tracking-wider">Status</span>
+                                <h4 class="font-bold text-neonCyan mt-1">In Production</h4>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 flex flex-wrap items-center gap-4">
+                            <button onclick="openScriptModal()" class="px-7 py-3.5 rounded-full font-semibold text-white bg-gradient-to-r from-purple-600 to-cyan-600 hover:opacity-90 transition-all flex items-center gap-2">
+                                <i data-lucide="book-open" class="w-4 h-4"></i> Read Script Excerpt
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-5">
+                        <div class="rounded-2xl overflow-hidden border border-white/10 bg-darkBg/80 p-6 space-y-4 shadow-2xl">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                                <span class="text-xs font-mono text-neonPurple">EXT. BLUE TAPARI - NIGHT</span>
+                                <span class="text-xs font-mono text-gray-500">SCENE 12</span>
+                            </div>
+                            <p class="text-xs font-mono text-gray-300 leading-relaxed italic">
+                                "The neon hum of the glowing teapot sign flickers, casting an indigo reflection over KABIR (24) as he stares into his steaming cup. The city sleeps, but the thoughts here run louder than engines."
+                            </p>
+                            <div class="pt-2 text-right">
+                                <span class="text-xs font-semibold text-neonCyan">— Excerpt from The Blue Tapari screenplay</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="easteregg" class="py-24 px-6 relative z-10 bg-gradient-to-t from-transparent via-cardBg/30 to-transparent">
+        <div class="max-w-5xl mx-auto text-center space-y-8">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/20 text-neonCyan text-xs font-semibold uppercase tracking-widest border border-cyan-500/30">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Surprise Easter Egg
+            </div>
+            
+            <h2 class="text-4xl sm:text-5xl font-extrabold font-display">
+                INTERACTIVE <span class="text-gradient">AMBIENT GALAXY</span>
+            </h2>
+            
+            <p class="text-gray-400 max-w-xl mx-auto">
+                Toggle this interactive particle projector to immerse your screen in a vibrant nebula cloud reflecting Vanshith's digital palette.
+            </p>
+
+            <div class="glass-card rounded-3xl p-8 border border-white/10 relative overflow-hidden glow-cyan max-w-3xl mx-auto">
+                <div id="projector-display" class="h-64 rounded-2xl bg-darkBg flex items-center justify-center relative overflow-hidden border border-white/5">
+                    <div id="nebula-particle" class="absolute w-72 h-72 rounded-full bg-gradient-to-r from-purple-600 via-cyan-500 to-orange-500 opacity-60 blur-3xl animate-pulse"></div>
+                    <div class="relative z-10 text-center space-y-3">
+                        <i data-lucide="orbit" class="w-12 h-12 text-neonCyan mx-auto animate-spin" style="animation-duration: 12s;"></i>
+                        <h4 class="text-xl font-bold font-display text-white" id="projector-status">Projector Active: Nebula Mode</h4>
+                        <p class="text-xs text-gray-400">Click below to cycle color vibes.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center gap-4 pt-6">
+                    <button onclick="switchVibe('cyberpunk')" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-purple-500/20 text-neonPurple border border-purple-500/30 hover:bg-purple-500/30 transition-all">Cyberpunk Purple</button>
+                    <button onclick="switchVibe('matrix')" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-cyan-500/20 text-neonCyan border border-cyan-500/30 hover:bg-cyan-500/30 transition-all">Neon Cyan</button>
+                    <button onclick="switchVibe('sunset')" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-orange-500/20 text-neonOrange border border-orange-500/30 hover:bg-orange-500/30 transition-all">Film Noir Sunset</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-24 px-6 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="glass-card rounded-3xl p-8 sm:p-12 border border-white/10 space-y-8 glow-purple">
+                <div class="text-center space-y-3">
+                    <div class="inline-flex items-center gap-2 text-xs font-semibold text-neonPurple uppercase tracking-widest">
+                        <i data-lucide="mail" class="w-4 h-4"></i> Get In Touch
+                    </div>
+                    <h2 class="text-4xl sm:text-5xl font-extrabold font-display">
+                        LET'S CREATE <span class="text-gradient">TOGETHER</span>
+                    </h2>
+                    <p class="text-gray-400 max-w-lg mx-auto">
+                        Have a project in mind, a film collaboration, or just want to chat about animation? Drop me a message!
+                    </p>
+                </div>
+
+                <form onsubmit="handleContact(event)" class="space-y-6 max-w-2xl mx-auto">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Your Name</label>
+                            <input type="text" required placeholder="Alex Turner" class="w-full px-5 py-3 rounded-xl bg-darkBg border border-white/10 text-white focus:outline-none focus:border-neonPurple transition-colors">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Your Email</label>
+                            <input type="email" required placeholder="alex@example.com" class="w-full px-5 py-3 rounded-xl bg-darkBg border border-white/10 text-white focus:outline-none focus:border-neonPurple transition-colors">
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Message</label>
+                        <textarea rows="4" required placeholder="Tell me about your project..." class="w-full px-5 py-3 rounded-xl bg-darkBg border border-white/10 text-white focus:outline-none focus:border-neonPurple transition-colors"></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:opacity-90 transition-all shadow-xl shadow-purple-900/40">
+                        Send Message
+                    </button>
+                </form>
+
+                <!-- Social Links -->
+                <div class="pt-8 border-t border-white/10 flex flex-wrap items-center justify-center gap-6">
+                    <a href="https://imdb.com" target="_blank" class="flex items-center gap-2 px-5 py-2.5 rounded-xl glass-card text-gray-300 hover:text-white hover:border-neonPurple transition-all text-sm font-medium">
+                        <i data-lucide="film" class="w-4 h-4 text-neonPurple"></i> IMDb
+                    </a>
+                    <a href="https://discord.com" target="_blank" class="flex items-center gap-2 px-5 py-2.5 rounded-xl glass-card text-gray-300 hover:text-white hover:border-neonCyan transition-all text-sm font-medium">
+                        <i data-lucide="message-square" class="w-4 h-4 text-neonCyan"></i> Discord
+                    </a>
+                    <a href="https://instagram.com" target="_blank" class="flex items-center gap-2 px-5 py-2.5 rounded-xl glass-card text-gray-300 hover:text-white hover:border-neonOrange transition-all text-sm font-medium">
+                        <i data-lucide="instagram" class="w-4 h-4 text-neonOrange"></i> Instagram
+                    </a>
+                    <a href="https://artstation.com" target="_blank" class="flex items-center gap-2 px-5 py-2.5 rounded-xl glass-card text-gray-300 hover:text-white hover:border-purple-400 transition-all text-sm font-medium">
+                        <i data-lucide="palette" class="w-4 h-4 text-purple-400"></i> ArtStation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 border-t border-white/10 text-center text-xs text-gray-500 relative z-10">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>© 2026 Vanshith. All rights reserved. Crafted for 3D & Digital Art Excellence.</p>
+            <p class="flex items-center gap-1">Designed with <i data-lucide="heart" class="w-3.5 h-3.5 text-neonPurple fill-current"></i> & Passion for Cinema</p>
+        </div>
+    </footer>
+
+    <!-- Project Detail Modal -->
+    <div id="project-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-darkBg/80 backdrop-blur-md">
+        <div class="glass-card max-w-2xl w-full rounded-3xl p-6 sm:p-8 border border-white/10 relative space-y-6 glow-purple">
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="space-y-2">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/20 text-neonPurple border border-purple-500/30" id="modal-tag">Featured Work</span>
+                <h3 class="text-2xl sm:text-3xl font-bold font-display text-white" id="modal-title">Project Title</h3>
+            </div>
+            <div class="aspect-video rounded-2xl overflow-hidden bg-gray-900 border border-white/10">
+                <img id="modal-img" src="" alt="Project Preview" class="w-full h-full object-cover">
+            </div>
+            <p class="text-gray-300 text-sm leading-relaxed" id="modal-desc">
+                Detailed description of the artwork, pipelines used, and artistic vision.
+            </p>
+            <div class="flex justify-end gap-4 pt-4">
+                <button onclick="closeModal()" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-white/10 hover:bg-white/20 transition-all">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Excerpt Modal -->
+    <div id="script-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-darkBg/80 backdrop-blur-md">
+        <div class="glass-card max-w-3xl w-full rounded-3xl p-6 sm:p-8 border border-white/10 relative space-y-6 glow-cyan">
+            <button onclick="closeScriptModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="space-y-2">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/20 text-neonCyan border border-cyan-500/30">Screenplay Excerpt</span>
+                <h3 class="text-2xl sm:text-3xl font-bold font-display text-white">"The Blue Tapari" — Scene 12</h3>
+            </div>
+            <div class="p-6 rounded-2xl bg-darkBg border border-white/5 space-y-4 font-mono text-xs sm:text-sm text-gray-300 leading-relaxed max-h-96 overflow-y-auto">
+                <p class="text-neonPurple font-bold">EXT. THE BLUE TAPARI - MIDNIGHT</p>
+                <p>A solitary tea stall glows with an ethereal blue neon light amidst towering futuristic skyscrapers casting long obsidian shadows.</p>
+                <p class="text-neonCyan font-bold">KABIR (24)</p>
+                <p>Leans over the metallic counter, spinning a glowing holographic coin between his knuckles. OLD MAN RAHIM (60) stokes the charcoal stove, sparks floating upward like fireflies.</p>
+                <p class="text-neonCyan font-bold">RAHIM</p>
+                <p>"You spend too much time building worlds inside that computer of yours, Kabir. Sometimes you gotta look at the stars right above your cup."</p>
+                <p class="text-neonCyan font-bold">KABIR</p>
+                <p>"The stars are cold, Rahim bhai. The worlds I build... at least they listen when I animate their heartbeat."</p>
+            </div>
+            <div class="flex justify-end gap-4 pt-4">
+                <button onclick="closeScriptModal()" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-white/10 hover:bg-white/20 transition-all">Close Excerpt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast Notification -->
+    <div id="toast" class="fixed bottom-8 right-8 z-50 hidden glass-card px-6 py-4 rounded-2xl border border-green-500/30 text-white shadow-2xl flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+        <span>Message sent successfully! Vanshith will get back to you soon.</span>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Three.js Ambient Particle Field Background
+        const canvas = document.getElementById('bg-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 800;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 15;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.025,
+            color: 0xa855f7,
+            transparent: true,
+            opacity: 0.7
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+        camera.position.z = 5;
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+        window.addEventListener('mousemove', (event) => {
+            mouseX = event.clientX / window.innerWidth - 0.5;
+            mouseY = event.clientY / window.innerHeight - 0.5;
+        });
+
+        function animateThree() {
+            requestAnimationFrame(animateThree);
+            particlesMesh.rotation.y += 0.001;
+            particlesMesh.rotation.x += 0.0005;
+
+            particlesMesh.rotation.y += mouseX * 0.05;
+            particlesMesh.rotation.x += mouseY * 0.05;
+
+            renderer.render(scene, camera);
+        }
+        animateThree();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Gallery Filter Logic
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-neonPurple', 'text-white', 'shadow-lg', 'shadow-purple-900/40');
+                    b.classList.add('text-gray-400');
+                });
+                btn.classList.add('bg-neonPurple', 'text-white', 'shadow-lg', 'shadow-purple-900/40');
+                btn.classList.remove('text-gray-400');
+
+                const filter = btn.getAttribute('data-filter');
+                galleryItems.forEach(item => {
+                    if(filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Modal Controllers
+        function openModal(title, desc, imgUrl) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-img').src = imgUrl;
+            const modal = document.getElementById('project-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('project-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function openScriptModal() {
+            const modal = document.getElementById('script-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeScriptModal() {
+            const modal = document.getElementById('script-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // Easter Egg Vibe Switcher
+        function switchVibe(vibe) {
+            const nebula = document.getElementById('nebula-particle');
+            const status = document.getElementById('projector-status');
+            if(vibe === 'cyberpunk') {
+                nebula.className = 'absolute w-72 h-72 rounded-full bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-500 opacity-60 blur-3xl animate-pulse';
+                status.innerText = 'Projector Active: Cyberpunk Purple';
+            } else if(vibe === 'matrix') {
+                nebula.className = 'absolute w-72 h-72 rounded-full bg-gradient-to-r from-cyan-500 via-teal-500 to-blue-600 opacity-60 blur-3xl animate-pulse';
+                status.innerText = 'Projector Active: Neon Cyan';
+            } else if(vibe === 'sunset') {
+                nebula.className = 'absolute w-72 h-72 rounded-full bg-gradient-to-r from-orange-500 via-amber-500 to-purple-600 opacity-60 blur-3xl animate-pulse';
+                status.innerText = 'Projector Active: Film Noir Sunset';
+            }
+        }
+
+        // Contact Form Handler
+        function handleContact(e) {
+            e.preventDefault();
+            const toast = document.getElementById('toast');
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            e.target.reset();
+            setTimeout(() => {
+                toast.classList.remove('flex');
+                toast.classList.add('hidden');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
